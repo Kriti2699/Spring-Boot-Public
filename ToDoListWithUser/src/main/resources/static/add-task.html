@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Task</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #e0c3fc, #8ec5fc);
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .card {
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      background-color: #fff;
+      max-width: 500px;
+      width: 100%;
+    }
+    .btn-submit {
+      background-color: #6f42c1;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 0.5rem;
+    }
+    .btn-submit:hover {
+      background-color: #5936a2;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h3 class="text-center mb-4">Add New Task</h3>
+  <form id="taskForm">
+    <div class="mb-3">
+      <label for="title" class="form-label">Task Title</label>
+      <input type="text" class="form-control" id="title" required>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Task Description</label>
+      <textarea class="form-control" id="description" rows="4" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-submit w-100">Add Task</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("taskForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const title = document.getElementById("title").value.trim();
+    const task = document.getElementById("description").value.trim();
+
+    const taskData = {
+      user_id: 9, // hardcoded; replace with dynamic ID if needed
+      title: title,
+      task: task
+    };
+
+    fetch("http://localhost:8080/todolist/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(taskData)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to add task");
+        }
+        return response.json();
+      })
+      .then(() => {
+        alert("Task added successfully!");
+        document.getElementById("taskForm").reset();
+        window.location.href = "dashboard.html"; // Redirect after add
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("Failed to add task. Try again.");
+      });
+  });
+</script>
+
+</body>
+</html>
