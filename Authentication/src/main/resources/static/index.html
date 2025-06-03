@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #4a90e2, #8e44ad);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .card {
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .form-control {
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .form-control:focus {
+            border-color: black;
+            box-shadow: none;
+        }
+        .btn-signup {
+            border-radius: 50px;
+            border: 1px solid black;
+            background-color: white;
+            font-weight: bold;
+        }
+        .btn-signup:hover {
+            background-color: #f2f2f2;
+        }
+        .login-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .login-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const form = event.target;
+
+        const username = form.username.value.trim();
+        const emailid = form.emailid.value.trim();
+        const password = form.password.value;
+        const confirmPassword = form.confirmPassword.value;
+
+        // Validate passwords match
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        const formData = {
+            username: username,
+            password: password,
+            emailid: emailid
+        };
+        console.log("Sending to backend:", JSON.stringify(formData));
+
+        fetch("http://localhost:8080/userReg/createUser", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Registration failed");
+            return response.json();
+        })
+        .then(data => {
+            alert("Registration successful!");
+            window.location.href = "login.html"; 
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Registration failed. Please try again.");
+        });
+    });
+});
+</script>
+
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card w-100" style="max-width: 400px;">
+        <h2 class="text-center mb-4">Register</h2>
+        <form id="registerForm">
+            <div class="mb-3">
+                <input type="text" class="form-control" name="username" placeholder="Username" required>
+            </div>
+            <div class="mb-3">
+                <input type="email" class="form-control" name="emailid" placeholder="Email" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" name="password" placeholder="Password" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" required>
+            </div>
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-signup">Sign Up</button>
+            </div>
+        </form>
+        <p class="text-center">Have an account? <a href="login.html" class="login-link">Login Here</a></p>
+    </div>
+</div>
+
+</body>
+</html>
